@@ -10,6 +10,9 @@ on:
       - develop
       - main
 
+permissions:
+  contents: read
+
 jobs:
   integration-tests:
     name: Run Postman Tests
@@ -80,19 +83,11 @@ jobs:
         run: |
           newman run postman/PadelZGZ_API_RUNNER.postman_collection.json \
             --env-var "baseUrl=http://localhost:8080" \
-            --reporters cli,junit,htmlextra \
-            --reporter-junit-export results/newman-report.xml \
+            --reporters cli,htmlextra \
             --reporter-htmlextra-export results/newman-report.html \
             --iteration-count 1 \
             --timeout-request 10000 \
             --delay-request 300
-
-      - name: Publish test results
-        uses: mikepenz/action-junit-report@v4
-        if: always()
-        with:
-          report_paths: 'results/newman-report.xml'
-          check_name: 'Postman Test Results'
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
