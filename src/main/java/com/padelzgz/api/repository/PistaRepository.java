@@ -29,4 +29,8 @@ public interface PistaRepository extends JpaRepository<Pista, Long> {
             "HAVING AVG(v.puntuacion) >= :minPuntuacion",
             nativeQuery = true)
     Set<Long> findIdsByPuntuacionMediaMinima(@Param("minPuntuacion") float minPuntuacion);
+
+    long countByClubId(long clubId);
+
+    long countByClubIdAndActiva(long clubId, boolean activa);
 }

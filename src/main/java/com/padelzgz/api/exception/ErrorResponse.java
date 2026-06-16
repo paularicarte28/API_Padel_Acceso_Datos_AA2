@@ -35,6 +35,10 @@ public class ErrorResponse {
         return new ErrorResponse(400, message);
     }
 
+    public static ErrorResponse conflict(String message) {
+        return new ErrorResponse(409, message);
+    }
+
     public static ErrorResponse validationError(Map<String, String> errors) {
         return new ErrorResponse(400, "Error de validación", errors);
     }
