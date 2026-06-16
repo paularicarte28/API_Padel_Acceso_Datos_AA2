@@ -51,12 +51,13 @@ public class TorneoServiceImpl implements TorneoService {
     @Override
     public Torneo modifyTorneo(long id, Torneo newTorneo) {
         Torneo existing = torneoRepository.findById(id).orElseThrow(() -> new TorneoNotFoundException(id));
-        Club club = existing.getClub();
-        var inscripciones = existing.getInscripciones();
-        modelMapper.map(newTorneo, existing);
-        existing.setId(id);
-        existing.setClub(club);
-        existing.setInscripciones(inscripciones);
+        existing.setNombre(newTorneo.getNombre());
+        existing.setDescripcion(newTorneo.getDescripcion());
+        existing.setFechaInicio(newTorneo.getFechaInicio());
+        existing.setFechaFin(newTorneo.getFechaFin());
+        existing.setMaxParticipantes(newTorneo.getMaxParticipantes());
+        existing.setInscripcionAbierta(newTorneo.isInscripcionAbierta());
+        existing.setPrecioInscripcion(newTorneo.getPrecioInscripcion());
         return torneoRepository.save(existing);
     }
 
