@@ -1,0 +1,4 @@
+{
+  "request": { "method": "POST", "url": "/clubs" },
+  "response": { "status": 201, "headers": { "Content-Type": "application/json" }, "bodyFileName": "clubs/postClub-ok.json" }
+}

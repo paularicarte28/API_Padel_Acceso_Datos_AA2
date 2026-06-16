@@ -1,0 +1,1 @@
+{ "priority": 1, "request": { "method": "POST", "url": "/reservas", "bodyPatterns": [{ "matchesJsonPath": "$[?(!@.fecha)]" }] }, "response": { "status": 400, "headers": { "Content-Type": "application/json" }, "bodyFileName": "errors/badRequest-400.json" } }

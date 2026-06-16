@@ -1,0 +1,4 @@
+{
+  "request": { "method": "POST", "url": "/auth/login" },
+  "response": { "status": 200, "headers": { "Content-Type": "application/json" }, "bodyFileName": "auth/postLogin-ok.json" }
+}

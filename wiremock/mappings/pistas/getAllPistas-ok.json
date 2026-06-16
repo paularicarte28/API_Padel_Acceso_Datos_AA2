@@ -1,0 +1,4 @@
+{
+  "request": { "method": "GET", "url": "/pistas" },
+  "response": { "status": 200, "headers": { "Content-Type": "application/json" }, "bodyFileName": "pistas/getAllPistas-ok.json" }
+}

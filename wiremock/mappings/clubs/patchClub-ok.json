@@ -1,0 +1,4 @@
+{
+  "request": { "method": "PATCH", "urlPattern": "/clubs/[0-9]+" },
+  "response": { "status": 200, "headers": { "Content-Type": "application/json" }, "bodyFileName": "clubs/patchClub-ok.json" }
+}

@@ -1,0 +1,4 @@
+nombre,apellidos,email,password,telefono,nivel
+Pau,Ricarte,pau@padelzgz.com,pass123,650111001,AVANZADO
+Carlos,López,carlos@padelzgz.com,pass456,650222002,INTERMEDIO
+Ana,García,ana@padelzgz.com,pass789,650333003,INICIACION

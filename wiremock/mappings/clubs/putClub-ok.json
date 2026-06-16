@@ -1,0 +1,4 @@
+{
+  "request": { "method": "PUT", "urlPattern": "/clubs/[0-9]+" },
+  "response": { "status": 200, "headers": { "Content-Type": "application/json" }, "bodyFileName": "clubs/putClub-ok.json" }
+}

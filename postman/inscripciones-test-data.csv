@@ -1,0 +1,4 @@
+fechaInscripcion,estado,pagado,numeroPareja
+2025-06-15,PENDIENTE,false,1
+2025-06-16,CONFIRMADA,true,2
+2025-06-17,PENDIENTE,false,3

@@ -1,0 +1,5 @@
+{
+  "priority": 1,
+  "request": { "method": "PUT", "url": "/clubs/99999" },
+  "response": { "status": 404, "headers": { "Content-Type": "application/json" }, "bodyFileName": "errors/notFound-404.json" }
+}

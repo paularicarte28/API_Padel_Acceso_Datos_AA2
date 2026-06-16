@@ -1,0 +1,1 @@
+{ "request": { "method": "PUT", "urlPattern": "/usuarios/[0-9]+" }, "response": { "status": 200, "headers": { "Content-Type": "application/json" }, "bodyFileName": "usuarios/putUsuario-ok.json" } }

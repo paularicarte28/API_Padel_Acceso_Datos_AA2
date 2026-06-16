@@ -1,0 +1,1 @@
+{ "priority": 1, "request": { "method": "POST", "urlPattern": "/valoraciones/pista/[0-9]+/usuario/[0-9]+", "bodyPatterns": [{ "matchesJsonPath": "$[?(@.puntuacion > 5)]" }] }, "response": { "status": 400, "headers": { "Content-Type": "application/json" }, "bodyFileName": "errors/badRequest-400.json" } }

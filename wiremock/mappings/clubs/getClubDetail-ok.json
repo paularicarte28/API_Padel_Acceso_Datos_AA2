@@ -1,0 +1,4 @@
+{
+  "request": { "method": "GET", "urlPattern": "/clubs/[0-9]+" },
+  "response": { "status": 200, "headers": { "Content-Type": "application/json" }, "bodyFileName": "clubs/getClubDetail-ok.json" }
+}

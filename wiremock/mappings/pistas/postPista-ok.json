@@ -1,0 +1,4 @@
+{
+  "request": { "method": "POST", "urlPattern": "/pistas/club/[0-9]+" },
+  "response": { "status": 201, "headers": { "Content-Type": "application/json" }, "bodyFileName": "pistas/postPista-ok.json" }
+}

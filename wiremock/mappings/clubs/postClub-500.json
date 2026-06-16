@@ -1,0 +1,5 @@
+{
+  "priority": 2,
+  "request": { "method": "POST", "url": "/clubs/error" },
+  "response": { "status": 500, "headers": { "Content-Type": "application/json" }, "bodyFileName": "errors/internalServerError-500.json" }
+}

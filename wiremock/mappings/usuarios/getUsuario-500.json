@@ -1,0 +1,1 @@
+{ "priority": 1, "request": { "method": "GET", "url": "/usuarios/error" }, "response": { "status": 500, "headers": { "Content-Type": "application/json" }, "bodyFileName": "errors/internalServerError-500.json" } }

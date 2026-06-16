@@ -1,0 +1,4 @@
+[
+  { "id": 1, "nombre": "Club Pádel Zaragoza Norte", "ciudad": "Zaragoza", "telefono": "976111222", "email": "norte@padelzgz.com", "activo": true, "fechaApertura": "2022-03-01" },
+  { "id": 2, "nombre": "Club Pádel Zaragoza Sur", "ciudad": "Zaragoza", "telefono": "976333444", "email": "sur@padelzgz.com", "activo": true, "fechaApertura": "2021-06-15" }
+]

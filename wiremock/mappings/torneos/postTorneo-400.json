@@ -1,0 +1,1 @@
+{ "priority": 1, "request": { "method": "POST", "urlPattern": "/torneos/club/[0-9]+", "bodyPatterns": [{ "matchesJsonPath": "$[?(!@.fechaInicio)]" }] }, "response": { "status": 400, "headers": { "Content-Type": "application/json" }, "bodyFileName": "errors/badRequest-400.json" } }

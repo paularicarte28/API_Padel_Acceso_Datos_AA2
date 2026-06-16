@@ -1,0 +1,4 @@
+numero,tipo,interior,precioHora,activa,superficie
+1,CRISTAL,true,12.50,true,CESPED
+2,PANORAMICA,false,10.00,true,MOQUETA
+3,MURO,true,8.00,true,HORMIGON

@@ -1,0 +1,4 @@
+nombre,ciudad,telefono,email,activo,fechaApertura
+Club Pádel Norte ZGZ,Zaragoza,976111001,norte@padelzgz.com,true,2022-01-01
+Club Pádel Sur ZGZ,Zaragoza,976222002,sur@padelzgz.com,true,2021-06-15
+Club Pádel Este ZGZ,Zaragoza,976333003,este@padelzgz.com,false,2020-03-10

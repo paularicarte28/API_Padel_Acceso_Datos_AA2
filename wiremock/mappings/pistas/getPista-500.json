@@ -1,0 +1,5 @@
+{
+  "priority": 1,
+  "request": { "method": "GET", "url": "/pistas/error" },
+  "response": { "status": 500, "headers": { "Content-Type": "application/json" }, "bodyFileName": "errors/internalServerError-500.json" }
+}

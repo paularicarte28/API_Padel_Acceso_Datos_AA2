@@ -1,0 +1,4 @@
+[
+  { "id": 1, "numero": 1, "tipo": "CRISTAL", "interior": true, "precioHora": 12.50, "activa": true, "superficie": "CESPED" },
+  { "id": 2, "numero": 2, "tipo": "PANORAMICA", "interior": false, "precioHora": 10.00, "activa": true, "superficie": "MOQUETA" }
+]

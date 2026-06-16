@@ -1,0 +1,4 @@
+fecha,horaInicio,horaFin,pagado,comentario
+2025-07-20,10:00,11:00,false,Partido amistoso
+2025-07-21,12:00,13:00,true,Entrenamiento
+2025-07-22,18:00,19:00,false,Liga local

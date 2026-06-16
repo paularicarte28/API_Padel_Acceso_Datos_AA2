@@ -1,0 +1,5 @@
+{
+  "priority": 1,
+  "request": { "method": "POST", "url": "/clubs", "bodyPatterns": [{ "matchesJsonPath": "$[?(!@.nombre)]" }] },
+  "response": { "status": 400, "headers": { "Content-Type": "application/json" }, "bodyFileName": "errors/badRequest-400.json" }
+}

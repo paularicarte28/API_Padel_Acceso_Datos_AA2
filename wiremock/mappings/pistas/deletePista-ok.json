@@ -1,0 +1,4 @@
+{
+  "request": { "method": "DELETE", "urlPattern": "/pistas/[0-9]+" },
+  "response": { "status": 204 }
+}

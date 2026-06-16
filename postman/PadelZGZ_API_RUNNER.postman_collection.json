@@ -1,0 +1,3698 @@
+{
+  "info": {
+    "_postman_id": "padelzgz-runner-v4",
+    "name": "PadelZGZ API (RUNNER)",
+    "description": "Colección parametrizada. Cada carpeta crea sus propios recursos desde cero para ser independiente.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "dynEmail",
+      "value": ""
+    },
+    {
+      "key": "usuarioId",
+      "value": ""
+    },
+    {
+      "key": "clubId",
+      "value": ""
+    },
+    {
+      "key": "pistaId",
+      "value": ""
+    },
+    {
+      "key": "reservaId",
+      "value": ""
+    },
+    {
+      "key": "torneoId",
+      "value": ""
+    },
+    {
+      "key": "inscripcionId",
+      "value": ""
+    },
+    {
+      "key": "valoracionId",
+      "value": ""
+    },
+    {
+      "key": "notFoundId",
+      "value": "99999"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "[Setup] POST /usuarios - Crear usuario fresco",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tsauth = Date.now();",
+                  "pm.collectionVariables.set(\"dynEmail\", `user_auth_${tsauth}@padelzgz.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte\",\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\",\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /auth/login - Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /auth/login - KO (401) Credenciales incorrectas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", function () { pm.response.to.have.status(401); });",
+                  "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"noexiste@padelzgz.com\",\n  \"password\": \"wrong\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "[Setup] POST /usuarios - Crear usuario fresco",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tsusr = Date.now();",
+                  "pm.collectionVariables.set(\"dynEmail\", `user_usr_${tsusr}@padelzgz.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte\",\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\",\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /auth/login - Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /usuarios - OK (200) Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /usuarios?nivel=AVANZADO - OK (200) Filtrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios?nivel=AVANZADO",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios?nivel=AVANZADO"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /usuarios/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuarioId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /usuarios/mas-activos - OK (200) SQL nativa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/mas-activos?limite=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "mas-activos?limite=5"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /usuarios/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuarioId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte García\",\n  \"email\": \"{{dynEmail}}\",\n  \"nivel\": \"COMPETICION\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /usuarios/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuarioId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Errors",
+          "item": [
+            {
+              "name": "POST /usuarios - KO (400) Sin email",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Test\"\n}"
+                }
+              }
+            },
+            {
+              "name": "GET /usuarios/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{notFoundId}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "PUT /usuarios/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/usuarios/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "{{notFoundId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"T\",\n  \"apellidos\": \"T\",\n  \"email\": \"t@t.com\",\n  \"nivel\": \"INICIACION\"\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /usuarios/{id} - OK (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuarioId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clubs",
+      "item": [
+        {
+          "name": "[Setup] POST /usuarios - Crear usuario fresco",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tsclub = Date.now();",
+                  "pm.collectionVariables.set(\"dynEmail\", `user_club_${tsclub}@padelzgz.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte\",\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\",\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /auth/login - Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /clubs - OK (201) Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });",
+                  "pm.collectionVariables.set(\"clubId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Club Pádel ZGZ Norte\",\n  \"ciudad\": \"Zaragoza\",\n  \"telefono\": \"976111222\",\n  \"email\": \"norte@padelzgz.com\",\n  \"activo\": true,\n  \"fechaApertura\": \"2022-03-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /clubs - OK (200) Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /clubs?ciudad=Zaragoza&activo=true - OK (200) Filtrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubs?ciudad=Zaragoza&activo=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs?ciudad=Zaragoza&activo=true"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /clubs/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubs/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs",
+                "{{clubId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /clubs/{id}/pistas-resumen - OK (200) DTO relacional",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has totalPistas\", function () { pm.expect(pm.response.json()).to.have.property(\"totalPistas\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubs/{{clubId}}/pistas-resumen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs",
+                "{{clubId}}",
+                "pistas-resumen"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /clubs/mas-activos - OK (200) SQL nativa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/clubs/mas-activos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs",
+                "mas-activos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /clubs/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs",
+                "{{clubId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Club Pádel ZGZ Premium\",\n  \"ciudad\": \"Zaragoza\",\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /clubs/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs",
+                "{{clubId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Errors",
+          "item": [
+            {
+              "name": "POST /clubs - KO (400) Sin nombre",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/clubs",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "clubs"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ciudad\": \"Zaragoza\"\n}"
+                }
+              }
+            },
+            {
+              "name": "GET /clubs/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/clubs/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "clubs",
+                    "{{notFoundId}}"
+                  ]
+                }
+              }
+            },
+            {
+              "name": "PUT /clubs/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/clubs/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "clubs",
+                    "{{notFoundId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"T\",\n  \"ciudad\": \"Zaragoza\"\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /clubs/{id} - OK (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs",
+                "{{clubId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pistas",
+      "item": [
+        {
+          "name": "[Setup] POST /usuarios - Crear usuario fresco",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tspst = Date.now();",
+                  "pm.collectionVariables.set(\"dynEmail\", `user_pst_${tspst}@padelzgz.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte\",\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\",\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /auth/login - Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /clubs - Crear club para pistas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"clubId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Club Pistas Test\",\n  \"ciudad\": \"Zaragoza\",\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /pistas/club/{clubId} - OK (201) Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });",
+                  "pm.collectionVariables.set(\"pistaId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/club/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "club",
+                "{{clubId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numero\": 1,\n  \"tipo\": \"CRISTAL\",\n  \"interior\": true,\n  \"precioHora\": 12.50,\n  \"activa\": true,\n  \"superficie\": \"CESPED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /pistas - OK (200) Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pistas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /pistas?tipo=CRISTAL&interior=true&activa=true - OK (200) Filtrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pistas?tipo=CRISTAL&interior=true&activa=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas?tipo=CRISTAL&interior=true&activa=true"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /pistas/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/{{pistaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "{{pistaId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /pistas/por-precio - OK (200) SQL nativa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/por-precio?min=8&max=15",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "por-precio?min=8&max=15"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /pistas/mejor-valoradas - OK (200) SQL nativa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/mejor-valoradas?minPuntuacion=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "mejor-valoradas?minPuntuacion=1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /pistas/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/{{pistaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "{{pistaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numero\": 1,\n  \"tipo\": \"PANORAMICA\",\n  \"interior\": false,\n  \"precioHora\": 15.00,\n  \"activa\": true,\n  \"superficie\": \"MOQUETA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /pistas/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/{{pistaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "{{pistaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precioHora\": 12.50\n}"
+            }
+          }
+        },
+        {
+          "name": "Errors",
+          "item": [
+            {
+              "name": "POST /pistas - KO (400) Precio negativo",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/pistas/club/{{clubId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "pistas",
+                    "club",
+                    "{{clubId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"numero\": 99,\n  \"tipo\": \"CRISTAL\",\n  \"precioHora\": -5\n}"
+                }
+              }
+            },
+            {
+              "name": "GET /pistas/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/pistas/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "pistas",
+                    "{{notFoundId}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /pistas/{id} - OK (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/{{pistaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "{{pistaId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservas",
+      "item": [
+        {
+          "name": "[Setup] POST /usuarios - Crear usuario fresco",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tsrsv = Date.now();",
+                  "pm.collectionVariables.set(\"dynEmail\", `user_rsv_${tsrsv}@padelzgz.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte\",\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\",\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /auth/login - Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /clubs - Crear club para reservas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"clubId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Club Reservas Test\",\n  \"ciudad\": \"Zaragoza\",\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /pistas - Crear pista para reservas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"pistaId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/club/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "club",
+                "{{clubId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numero\": 1,\n  \"tipo\": \"CRISTAL\",\n  \"interior\": true,\n  \"precioHora\": 12.50,\n  \"activa\": true,\n  \"superficie\": \"CESPED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /reservas - OK (201) Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });",
+                  "pm.collectionVariables.set(\"reservaId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2025-07-20\",\n  \"horaInicio\": \"10:00\",\n  \"horaFin\": \"11:00\",\n  \"pagado\": false,\n  \"comentario\": \"Partido amistoso\",\n  \"pistaId\": {{pistaId}},\n  \"usuarioId\": {{usuarioId}}\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /reservas - OK (200) Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /reservas?fecha=2025-07-20&pagado=false - OK (200) Filtrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas?fecha=2025-07-20&pagado=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas?fecha=2025-07-20&pagado=false"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /reservas/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/{{reservaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "{{reservaId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /reservas/usuario/{usuarioId} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/usuario/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "usuario",
+                "{{usuarioId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /reservas/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/{{reservaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "{{reservaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2025-07-21\",\n  \"horaInicio\": \"11:00\",\n  \"horaFin\": \"12:00\",\n  \"pagado\": true,\n  \"pistaId\": {{pistaId}},\n  \"usuarioId\": {{usuarioId}}\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /reservas/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/{{reservaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "{{reservaId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pagado\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Errors",
+          "item": [
+            {
+              "name": "POST /reservas - KO (400) Sin fecha",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reservas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reservas"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"pistaId\": {{pistaId}},\n  \"usuarioId\": {{usuarioId}}\n}"
+                }
+              }
+            },
+            {
+              "name": "POST /reservas - KO (404) Pista no existe",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reservas",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reservas"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2025-07-20\",\n  \"horaInicio\": \"10:00\",\n  \"horaFin\": \"11:00\",\n  \"pistaId\": {{notFoundId}},\n  \"usuarioId\": {{usuarioId}}\n}"
+                }
+              }
+            },
+            {
+              "name": "GET /reservas/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/reservas/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "reservas",
+                    "{{notFoundId}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /reservas/{id} - OK (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/{{reservaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "{{reservaId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Torneos",
+      "item": [
+        {
+          "name": "[Setup] POST /usuarios - Crear usuario fresco",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tstrn = Date.now();",
+                  "pm.collectionVariables.set(\"dynEmail\", `user_trn_${tstrn}@padelzgz.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte\",\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\",\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /auth/login - Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /clubs - Crear club para torneos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"clubId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Club Torneos Test\",\n  \"ciudad\": \"Zaragoza\",\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /torneos/club/{clubId} - OK (201) Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });",
+                  "pm.collectionVariables.set(\"torneoId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/torneos/club/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "torneos",
+                "club",
+                "{{clubId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Torneo Verano ZGZ 2025\",\n  \"descripcion\": \"Torneo nivel intermedio\",\n  \"fechaInicio\": \"2025-07-01\",\n  \"fechaFin\": \"2025-07-07\",\n  \"maxParticipantes\": 16,\n  \"inscripcionAbierta\": true,\n  \"precioInscripcion\": 25.00\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /torneos - OK (200) Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/torneos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "torneos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /torneos?inscripcionAbierta=true - OK (200) Filtrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/torneos?inscripcionAbierta=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "torneos?inscripcionAbierta=true"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /torneos/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/torneos/{{torneoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "torneos",
+                "{{torneoId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /torneos/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/torneos/{{torneoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "torneos",
+                "{{torneoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Torneo Verano ZGZ 2025 Especial\",\n  \"fechaInicio\": \"2025-07-01\",\n  \"maxParticipantes\": 32,\n  \"inscripcionAbierta\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /torneos/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/torneos/{{torneoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "torneos",
+                "{{torneoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inscripcionAbierta\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "Errors",
+          "item": [
+            {
+              "name": "POST /torneos - KO (400) Sin fecha inicio",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/torneos/club/{{clubId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "torneos",
+                    "club",
+                    "{{clubId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Torneo sin fecha\"\n}"
+                }
+              }
+            },
+            {
+              "name": "GET /torneos/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/torneos/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "torneos",
+                    "{{notFoundId}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /torneos/{id} - OK (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/torneos/{{torneoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "torneos",
+                "{{torneoId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inscripciones",
+      "item": [
+        {
+          "name": "[Setup] POST /usuarios - Crear usuario fresco",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tsins = Date.now();",
+                  "pm.collectionVariables.set(\"dynEmail\", `user_ins_${tsins}@padelzgz.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte\",\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\",\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /auth/login - Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /clubs - Crear club para inscripciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"clubId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Club Inscripciones Test\",\n  \"ciudad\": \"Zaragoza\",\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /torneos - Crear torneo para inscripciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"torneoId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/torneos/club/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "torneos",
+                "club",
+                "{{clubId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Torneo Inscripciones\",\n  \"fechaInicio\": \"2025-10-01\",\n  \"maxParticipantes\": 8,\n  \"inscripcionAbierta\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /inscripciones - OK (201) Crear",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });",
+                  "pm.collectionVariables.set(\"inscripcionId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaInscripcion\": \"2025-06-15\",\n  \"estado\": \"PENDIENTE\",\n  \"pagado\": false,\n  \"numeroPareja\": 1,\n  \"usuarioId\": {{usuarioId}},\n  \"torneoId\": {{torneoId}}\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /inscripciones - OK (200) Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /inscripciones?torneoId={{torneoId}}&estado=PENDIENTE - OK (200) Filtrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones?torneoId={{torneoId}}&estado=PENDIENTE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones?torneoId={{torneoId}}&estado=PENDIENTE"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /inscripciones/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones/{{inscripcionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones",
+                "{{inscripcionId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /inscripciones/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones/{{inscripcionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones",
+                "{{inscripcionId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fechaInscripcion\": \"2025-06-15\",\n  \"estado\": \"CONFIRMADA\",\n  \"pagado\": true,\n  \"usuarioId\": {{usuarioId}},\n  \"torneoId\": {{torneoId}}\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /inscripciones/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones/{{inscripcionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones",
+                "{{inscripcionId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"CONFIRMADA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Errors",
+          "item": [
+            {
+              "name": "POST /inscripciones - KO (400) Sin fecha",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/inscripciones",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "inscripciones"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"usuarioId\": {{usuarioId}},\n  \"torneoId\": {{torneoId}}\n}"
+                }
+              }
+            },
+            {
+              "name": "GET /inscripciones/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/inscripciones/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "inscripciones",
+                    "{{notFoundId}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /inscripciones/{id} - OK (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/inscripciones/{{inscripcionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "inscripciones",
+                "{{inscripcionId}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Valoraciones",
+      "item": [
+        {
+          "name": "[Setup] POST /usuarios - Crear usuario fresco",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const tsval = Date.now();",
+                  "pm.collectionVariables.set(\"dynEmail\", `user_val_${tsval}@padelzgz.com`);"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"usuarioId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pau\",\n  \"apellidos\": \"Ricarte\",\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\",\n  \"nivel\": \"AVANZADO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /auth/login - Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{dynEmail}}\",\n  \"password\": \"miPassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /clubs - Crear club para valoraciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"clubId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clubs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "clubs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Club Valoraciones Test\",\n  \"ciudad\": \"Zaragoza\",\n  \"activo\": true\n}"
+            }
+          }
+        },
+        {
+          "name": "[Setup] POST /pistas - Crear pista para valoraciones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"pistaId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pistas/club/{{clubId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pistas",
+                "club",
+                "{{clubId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numero\": 1,\n  \"tipo\": \"CRISTAL\",\n  \"interior\": true,\n  \"precioHora\": 12.50,\n  \"activa\": true,\n  \"superficie\": \"CESPED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /valoraciones/pista/{pistaId}/usuario/{usuarioId} - OK (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });",
+                  "pm.collectionVariables.set(\"valoracionId\", pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones/pista/{{pistaId}}/usuario/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones",
+                "pista",
+                "{{pistaId}}",
+                "usuario",
+                "{{usuarioId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"puntuacion\": 5,\n  \"comentario\": \"Pista en perfecto estado\",\n  \"fechaValoracion\": \"2025-07-20\",\n  \"visibilidad\": \"PUBLICA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /valoraciones - OK (200) Listar",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /valoraciones?pistaId={{pistaId}}&puntuacion=5 - OK (200) Filtrado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response is array\", function () { pm.expect(pm.response.json()).to.be.an(\"array\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones?pistaId={{pistaId}}&puntuacion=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones?pistaId={{pistaId}}&puntuacion=5"
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /valoraciones/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones/{{valoracionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones",
+                "{{valoracionId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "PUT /valoraciones/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones/{{valoracionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones",
+                "{{valoracionId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"puntuacion\": 4,\n  \"comentario\": \"Buena pista\",\n  \"fechaValoracion\": \"2025-07-20\",\n  \"visibilidad\": \"PUBLICA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "PATCH /valoraciones/{id} - OK (200)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                  "pm.test(\"Response has id\", function () { pm.expect(pm.response.json()).to.have.property(\"id\"); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones/{{valoracionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones",
+                "{{valoracionId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"puntuacion\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Errors",
+          "item": [
+            {
+              "name": "POST /valoraciones - KO (400) Puntuacion mayor de 5",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/valoraciones/pista/{{pistaId}}/usuario/{{usuarioId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "valoraciones",
+                    "pista",
+                    "{{pistaId}}",
+                    "usuario",
+                    "{{usuarioId}}"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"puntuacion\": 10,\n  \"fechaValoracion\": \"2025-07-20\"\n}"
+                }
+              }
+            },
+            {
+              "name": "GET /valoraciones/{id} - KO (404)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 404\", function () { pm.response.to.have.status(404); });",
+                      "pm.test(\"Response has error message\", function () { pm.expect(pm.response.json()).to.have.property(\"message\"); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/valoraciones/{{notFoundId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "valoraciones",
+                    "{{notFoundId}}"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /valoraciones/{id} - OK (204)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () { pm.response.to.have.status(204); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones/{{valoracionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones",
+                "{{valoracionId}}"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

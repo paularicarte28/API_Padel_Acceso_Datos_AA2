@@ -1,0 +1,907 @@
+openapi: 3.0.3
+info:
+  title: PadelZGZ API
+  description: API REST para gestión de clubes de pádel, reservas de pistas, torneos e inscripciones en Zaragoza.
+  version: 1.0.0
+  contact:
+    name: PadelZGZ
+    email: info@padelzgz.com
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor de desarrollo
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Club:
+      type: object
+      required: [nombre, ciudad]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          example: "Club Pádel Zaragoza"
+        ciudad:
+          type: string
+          example: "Zaragoza"
+        direccion:
+          type: string
+          example: "Calle Mayor 10"
+        telefono:
+          type: string
+          pattern: "^[0-9]{9}$"
+          example: "976123456"
+        email:
+          type: string
+          format: email
+          example: "info@clubpadel.com"
+        activo:
+          type: boolean
+          example: true
+        fechaApertura:
+          type: string
+          format: date
+          example: "2020-03-15"
+
+    Pista:
+      type: object
+      required: [numero, tipo]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        numero:
+          type: integer
+          minimum: 1
+          example: 3
+        tipo:
+          type: string
+          enum: [PANORAMICA, CRISTAL, MURO]
+          example: "CRISTAL"
+        interior:
+          type: boolean
+          example: true
+        precioHora:
+          type: number
+          format: float
+          example: 12.50
+        activa:
+          type: boolean
+          example: true
+        superficie:
+          type: string
+          enum: [CESPED, MOQUETA, HORMIGON]
+          example: "CESPED"
+
+    Usuario:
+      type: object
+      required: [nombre, apellidos, email]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          example: "Pau"
+        apellidos:
+          type: string
+          example: "Ricarte"
+        email:
+          type: string
+          format: email
+          example: "pau@padelzgz.com"
+        telefono:
+          type: string
+          pattern: "^[0-9]{9}$"
+          example: "650123456"
+        nivel:
+          type: string
+          enum: [INICIACION, INTERMEDIO, AVANZADO, COMPETICION]
+          example: "AVANZADO"
+        fechaRegistro:
+          type: string
+          format: date
+          example: "2024-01-10"
+
+    ReservaInDTO:
+      type: object
+      required: [fecha, horaInicio, horaFin, pistaId, usuarioId]
+      properties:
+        fecha:
+          type: string
+          format: date
+          example: "2025-07-20"
+        horaInicio:
+          type: string
+          example: "10:00"
+        horaFin:
+          type: string
+          example: "11:00"
+        precio:
+          type: number
+          format: float
+          example: 12.50
+        pagado:
+          type: boolean
+          example: false
+        comentario:
+          type: string
+          example: "Reserva para partido amistoso"
+        pistaId:
+          type: integer
+          format: int64
+          example: 1
+        usuarioId:
+          type: integer
+          format: int64
+          example: 1
+
+    Torneo:
+      type: object
+      required: [nombre, fechaInicio]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        nombre:
+          type: string
+          example: "Torneo Verano ZGZ 2025"
+        descripcion:
+          type: string
+          example: "Torneo de verano para jugadores de nivel intermedio y avanzado"
+        fechaInicio:
+          type: string
+          format: date
+          example: "2025-07-01"
+        fechaFin:
+          type: string
+          format: date
+          example: "2025-07-07"
+        maxParticipantes:
+          type: integer
+          minimum: 2
+          example: 16
+        inscripcionAbierta:
+          type: boolean
+          example: true
+        precioInscripcion:
+          type: number
+          format: float
+          example: 25.00
+
+    InscripcionInDTO:
+      type: object
+      required: [fechaInscripcion, usuarioId, torneoId]
+      properties:
+        fechaInscripcion:
+          type: string
+          format: date
+          example: "2025-06-15"
+        estado:
+          type: string
+          enum: [PENDIENTE, CONFIRMADA, CANCELADA]
+          example: "PENDIENTE"
+        pagado:
+          type: boolean
+          example: false
+        numeroPareja:
+          type: integer
+          example: 5
+        notas:
+          type: string
+          example: "Pareja: Carlos López"
+        usuarioId:
+          type: integer
+          format: int64
+          example: 1
+        torneoId:
+          type: integer
+          format: int64
+          example: 1
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: "pau@padelzgz.com"
+        password:
+          type: string
+          example: "miPassword123"
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiJ9..."
+        tipo:
+          type: string
+          example: "Bearer"
+        email:
+          type: string
+          example: "pau@padelzgz.com"
+
+    ClubPistasResumen:
+      type: object
+      properties:
+        clubId:
+          type: integer
+          format: int64
+        nombreClub:
+          type: string
+        ciudad:
+          type: string
+        totalPistas:
+          type: integer
+        pistasActivas:
+          type: integer
+        pistas:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              numero:
+                type: integer
+              tipo:
+                type: string
+              interior:
+                type: boolean
+              precioHora:
+                type: number
+              valoracionMedia:
+                type: number
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Club no encontrado: 99"
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+
+paths:
+  /auth/login:
+    post:
+      tags: [Autenticación]
+      summary: Obtener token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              login_valido:
+                summary: Login válido
+                value: { email: "pau@padelzgz.com", password: "miPassword123" }
+              login_admin:
+                summary: Login admin
+                value: { email: "admin@padelzgz.com", password: "adminPass" }
+      responses:
+        '200':
+          description: Token JWT generado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciales incorrectas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /clubs:
+    get:
+      tags: [Clubs]
+      summary: Listar clubs
+      parameters:
+        - name: ciudad
+          in: query
+          schema:
+            type: string
+          example: "Zaragoza"
+        - name: activo
+          in: query
+          schema:
+            type: boolean
+          example: true
+      responses:
+        '200':
+          description: Lista de clubs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Club'
+              examples:
+                clubs_zaragoza:
+                  summary: Clubs en Zaragoza
+                  value:
+                    - id: 1
+                      nombre: "Club Pádel Zaragoza"
+                      ciudad: "Zaragoza"
+                      activo: true
+                clubs_vacio:
+                  summary: Sin resultados
+                  value: []
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Clubs]
+      summary: Crear un club
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Club'
+            examples:
+              club_nuevo:
+                summary: Club nuevo en Zaragoza
+                value:
+                  nombre: "Pádel Norte ZGZ"
+                  ciudad: "Zaragoza"
+                  telefono: "976000111"
+                  activo: true
+                  fechaApertura: "2024-09-01"
+      responses:
+        '201':
+          description: Club creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Club'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                error_validacion:
+                  summary: Falta nombre
+                  value:
+                    code: 400
+                    message: "Error de validación"
+                    errors:
+                      nombre: "El nombre es obligatorio"
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /clubs/{id}:
+    get:
+      tags: [Clubs]
+      summary: Obtener un club por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Club encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Club'
+        '404':
+          description: Club no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                not_found:
+                  value: { code: 404, message: "Club no encontrado: 99" }
+        '500':
+          description: Error interno
+
+    put:
+      tags: [Clubs]
+      summary: Modificar un club completo
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Club'
+      responses:
+        '200':
+          description: Club actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Club'
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Club no encontrado
+        '500':
+          description: Error interno
+
+    patch:
+      tags: [Clubs]
+      summary: Modificar campos de un club parcialmente
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Club'
+            examples:
+              patch_nombre:
+                summary: Cambiar solo el nombre
+                value: { nombre: "Club Pádel ZGZ Premium" }
+              patch_activo:
+                summary: Desactivar club
+                value: { activo: false }
+      responses:
+        '200':
+          description: Club parcialmente actualizado
+        '404':
+          description: Club no encontrado
+        '500':
+          description: Error interno
+
+    delete:
+      tags: [Clubs]
+      summary: Eliminar un club
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Club eliminado
+        '404':
+          description: Club no encontrado
+        '500':
+          description: Error interno
+
+  /clubs/{id}/pistas-resumen:
+    get:
+      tags: [Clubs]
+      summary: Resumen de pistas de un club con valoración media (DTO relacional)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Resumen de pistas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClubPistasResumen'
+        '404':
+          description: Club no encontrado
+        '500':
+          description: Error interno
+
+  /clubs/mas-activos:
+    get:
+      tags: [Clubs]
+      summary: Clubs con más pistas activas (SQL nativa)
+      responses:
+        '200':
+          description: Lista ordenada por número de pistas activas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Club'
+        '500':
+          description: Error interno
+
+  /pistas:
+    get:
+      tags: [Pistas]
+      summary: Listar pistas con filtros opcionales
+      parameters:
+        - name: tipo
+          in: query
+          schema:
+            type: string
+        - name: interior
+          in: query
+          schema:
+            type: boolean
+        - name: activa
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Lista de pistas
+        '500':
+          description: Error interno
+
+  /pistas/club/{clubId}:
+    post:
+      tags: [Pistas]
+      summary: Crear pista en un club
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pista'
+      responses:
+        '201':
+          description: Pista creada
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Club no encontrado
+        '500':
+          description: Error interno
+
+  /pistas/por-precio:
+    get:
+      tags: [Pistas]
+      summary: Pistas en rango de precio (SQL nativa)
+      parameters:
+        - name: min
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: max
+          in: query
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Pistas en el rango indicado
+        '500':
+          description: Error interno
+
+  /pistas/mejor-valoradas:
+    get:
+      tags: [Pistas]
+      summary: Pistas con puntuación media mínima (SQL nativa)
+      parameters:
+        - name: minPuntuacion
+          in: query
+          schema:
+            type: number
+            default: 4
+      responses:
+        '200':
+          description: Pistas mejor valoradas
+        '500':
+          description: Error interno
+
+  /usuarios:
+    get:
+      tags: [Usuarios]
+      summary: Listar usuarios con filtros
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: nivel
+          in: query
+          schema:
+            type: string
+        - name: nombre
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de usuarios
+        '500':
+          description: Error interno
+
+    post:
+      tags: [Usuarios]
+      summary: Registrar nuevo usuario (público)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        '201':
+          description: Usuario registrado
+        '400':
+          description: Datos inválidos
+        '500':
+          description: Error interno
+
+  /reservas:
+    get:
+      tags: [Reservas]
+      summary: Listar reservas con filtros
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: fecha
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: pagado
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Lista de reservas
+        '500':
+          description: Error interno
+
+    post:
+      tags: [Reservas]
+      summary: Crear reserva (usa DTO con IDs de pista y usuario)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservaInDTO'
+      responses:
+        '201':
+          description: Reserva creada
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Pista o usuario no encontrado
+        '500':
+          description: Error interno
+
+  /torneos:
+    get:
+      tags: [Torneos]
+      summary: Listar torneos con filtros
+      parameters:
+        - name: inscripcionAbierta
+          in: query
+          schema:
+            type: boolean
+        - name: clubId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: desde
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: hasta
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Lista de torneos
+        '500':
+          description: Error interno
+
+  /torneos/club/{clubId}:
+    post:
+      tags: [Torneos]
+      summary: Crear torneo en un club
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: clubId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Torneo'
+      responses:
+        '201':
+          description: Torneo creado
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Club no encontrado
+        '500':
+          description: Error interno
+
+  /inscripciones:
+    get:
+      tags: [Inscripciones]
+      summary: Listar inscripciones con filtros
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: torneoId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: estado
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de inscripciones
+        '500':
+          description: Error interno
+
+    post:
+      tags: [Inscripciones]
+      summary: Inscribir usuario en torneo
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InscripcionInDTO'
+      responses:
+        '201':
+          description: Inscripción realizada
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Usuario o torneo no encontrado
+        '500':
+          description: Error interno
+
+  /valoraciones:
+    get:
+      tags: [Valoraciones]
+      summary: Listar valoraciones con filtros
+      parameters:
+        - name: pistaId
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: puntuacion
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+      responses:
+        '200':
+          description: Lista de valoraciones
+        '500':
+          description: Error interno
+
+  /valoraciones/pista/{pistaId}/usuario/{usuarioId}:
+    post:
+      tags: [Valoraciones]
+      summary: Crear valoración de una pista
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: pistaId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: usuarioId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                puntuacion:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 4
+                comentario:
+                  type: string
+                  example: "Pista en muy buen estado, muy limpia"
+                visibilidad:
+                  type: string
+                  example: "PUBLICA"
+      responses:
+        '201':
+          description: Valoración creada
+        '400':
+          description: Datos inválidos
+        '404':
+          description: Pista o usuario no encontrado
+        '500':
+          description: Error interno
