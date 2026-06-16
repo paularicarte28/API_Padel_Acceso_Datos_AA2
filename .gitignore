@@ -40,3 +40,5 @@ application-prod.properties
 
 # WireMock JAR
 wiremock/*.jar
+
+.env
