@@ -53,9 +53,13 @@ public class PistaServiceImpl implements PistaService {
     public Pista modifyPista(long id, Pista newPista) {
         Pista existing = pistaRepository.findById(id).orElseThrow(() -> new PistaNotFoundException(id));
         Club club = existing.getClub();
+        var reservas = existing.getReservas();
+        var valoraciones = existing.getValoraciones();
         modelMapper.map(newPista, existing);
         existing.setId(id);
         existing.setClub(club);
+        existing.setReservas(reservas);
+        existing.setValoraciones(valoraciones);
         return pistaRepository.save(existing);
     }
 

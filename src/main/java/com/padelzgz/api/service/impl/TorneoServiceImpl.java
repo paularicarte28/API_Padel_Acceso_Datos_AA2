@@ -52,9 +52,11 @@ public class TorneoServiceImpl implements TorneoService {
     public Torneo modifyTorneo(long id, Torneo newTorneo) {
         Torneo existing = torneoRepository.findById(id).orElseThrow(() -> new TorneoNotFoundException(id));
         Club club = existing.getClub();
+        var inscripciones = existing.getInscripciones();
         modelMapper.map(newTorneo, existing);
         existing.setId(id);
         existing.setClub(club);
+        existing.setInscripciones(inscripciones);
         return torneoRepository.save(existing);
     }
 

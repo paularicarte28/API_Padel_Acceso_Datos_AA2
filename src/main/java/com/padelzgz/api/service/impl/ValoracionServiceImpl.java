@@ -55,10 +55,12 @@ public class ValoracionServiceImpl implements ValoracionService {
         Valoracion existing = valoracionRepository.findById(id).orElseThrow(() -> new ValoracionNotFoundException(id));
         Pista pista = existing.getPista();
         Usuario usuario = existing.getUsuario();
+        var fechaValoracion = existing.getFechaValoracion();
         modelMapper.map(newValoracion, existing);
         existing.setId(id);
         existing.setPista(pista);
         existing.setUsuario(usuario);
+        existing.setFechaValoracion(fechaValoracion);
         return valoracionRepository.save(existing);
     }
 
