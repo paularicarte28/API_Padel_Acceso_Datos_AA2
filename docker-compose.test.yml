@@ -1,0 +1,48 @@
+# ============================================================
+# docker-compose.test.yml
+# Entorno LOCAL de pruebas — base de datos efímera, sin volumen
+# persistente, para desarrollar y probar sin tocar producción.
+#
+# Uso:
+#   docker compose -f docker-compose.test.yml up -d
+#   newman run postman/PadelZGZ_API_RUNNER.postman_collection.json \
+#     --env-var "baseUrl=http://localhost:8081"
+#   docker compose -f docker-compose.test.yml down
+# ============================================================
+
+services:
+  db-test:
+    image: mariadb:11.3.2
+    container_name: padelzgz-db-test
+    environment:
+      MYSQL_USER: padeluser
+      MYSQL_PASSWORD: padelpass
+      MYSQL_DATABASE: padelzgz_test
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3308:3306"          # Puerto diferente al de producción (3307)
+    # Sin volumen → la BD se destruye al hacer 'down' (entorno limpio)
+    tmpfs:
+      - /var/lib/mysql       # En RAM, mucho más rápido para tests
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api-test:
+    build: .
+    container_name: padelzgz-api-test
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:mariadb://db-test:3306/padelzgz_test
+      DB_USERNAME: padeluser
+      DB_PASSWORD: padelpass
+      JWT_SECRET: padelzgzSecretKeyMuyLargaParaQueSeaSegura2024XYZ123456789ABC
+      JWT_EXPIRATION: 86400000
+    ports:
+      - "8081:8080"          # Puerto diferente al de producción (8080)
+    depends_on:
+      db-test:
+        condition: service_healthy
+    restart: "no"            # No reiniciar en tests: fallo = fallo visible
