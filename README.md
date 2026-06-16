@@ -1,66 +1,132 @@
-# PadelZGZ API
+# PadelZGZ API — AA2
 
 API REST para la gestión de clubes de pádel, reservas de pistas, torneos e inscripciones en Zaragoza.
 
-Desarrollada con **Spring Boot 3.2** + **MariaDB** como parte del proyecto intermodular del Ciclo DAM (SEAS/Fundación San Valero, curso 2025-2026).
+Desarrollada con **Spring Boot 3.2** + **MariaDB** como Actividad de Aprendizaje de 2ª Evaluación de la asignatura **Acceso a Datos** (DAM, SEAS/Fundación San Valero, curso 2025-2026).
 
 ---
 
-## Requisitos previos
+## Estado del proyecto
 
-- Java 17 o superior
-- Maven 3.8+
-- MariaDB 10.6+ (o MySQL 8+)
+![Postman Tests](https://github.com/paularicarte28/API_Padel_Acceso_Datos_AA2/actions/workflows/postman-tests.yml/badge.svg?branch=develop)
 
 ---
 
-## Configuración de la base de datos
+## Requisitos de la AA2 implementados
 
-Ejecuta los siguientes comandos en MariaDB:
+### Obligatorios
 
-```sql
-CREATE DATABASE padelzgz;
-CREATE USER 'padeluser'@'localhost' IDENTIFIED BY 'padelpass';
-GRANT ALL PRIVILEGES ON padelzgz.* TO 'padeluser'@'localhost';
-FLUSH PRIVILEGES;
-```
+| Requisito | Estado | Detalle |
+|-----------|--------|---------|
+| Versionado de endpoints | ✅ | `/api/v2/clubs` — GET, POST, PUT, DELETE con DTOs enriquecidos y validaciones extra |
+| Configuración externalizada (dev/prod) | ✅ | `application-dev.properties` + `application-prod.properties` + variables de entorno |
+| Despliegue en AWS | ✅ | EC2 con Docker Compose (ver sección AWS) |
+| Tests Postman + GitHub Actions | ✅ | 137 assertions, 96 requests, 0 fallos |
+| APIMan | ✅ | API Gateway + Developer Portal con token y políticas de rate limiting |
 
-Spring Boot creará automáticamente las tablas al arrancar gracias a `spring.jpa.hibernate.ddl-auto=update`.
+### Extras implementados
+
+| Extra | Estado | Detalle |
+|-------|--------|---------|
+| Git Flow | ✅ | Ramas `main`, `develop`, `feature/*` |
+| Tests Postman completos | ✅ | Todas las entidades cubiertas con casos de error |
+| Docker Compose producción | ✅ | `docker-compose.yml` — API + MariaDB |
+| Docker Compose test | ✅ | `docker-compose.test.yml` — entorno efímero en RAM |
+| JWT | ✅ | Spring Security + jjwt, token requerido en operaciones de escritura |
 
 ---
 
-## Puesta en marcha
+## Versionado de la API (v2)
+
+Se ha versionado la entidad `Club` introduciendo los siguientes cambios respecto a v1:
+
+| Método | Endpoint v1 | Endpoint v2 | Cambios en v2 |
+|--------|------------|------------|---------------|
+| GET | `/clubs` | `/api/v2/clubs` | Respuesta con DTO enriquecido: incluye `totalPistas` y `pistasActivas` |
+| POST | `/clubs` | `/api/v2/clubs` | Valida duplicados (mismo nombre + ciudad devuelve 409 Conflict) |
+| PUT | `/clubs/{id}` | `/api/v2/clubs/{id}` | Valida duplicados al actualizar |
+| DELETE | `/clubs/{id}` | `/api/v2/clubs/{id}` | Impide borrar un club con pistas asociadas (devuelve 409 Conflict) |
+
+---
+
+## Entornos
+
+### Desarrollo (por defecto)
 
 ```bash
-# Clonar el repositorio
-git clone https://github.com/paula.ricarte/padelzgz-api.git
-cd padelzgz-api
-
-# Compilar
-mvn clean package -DskipTests
-
-# Ejecutar
+# Arranca con perfil dev (MariaDB en localhost:3307)
 mvn spring-boot:run
 ```
 
-La API arranca en `http://localhost:8080`.
+### Producción con Docker Compose
+
+```bash
+# Copiar y configurar variables
+cp .env.sample .env
+# Editar .env con tus valores
+
+# Levantar API + MariaDB
+docker compose up -d --build
+```
+
+### Entorno de pruebas local (efímero)
+
+```bash
+# BD en RAM, se destruye al parar — puerto 8081
+docker compose -f docker-compose.test.yml up -d --build
+
+# Lanzar tests contra ese entorno
+newman run postman/PadelZGZ_API_RUNNER.postman_collection.json \
+  --env-var "baseUrl=http://localhost:8081"
+
+# Limpiar
+docker compose -f docker-compose.test.yml down
+```
 
 ---
 
-## Documentación interactiva (Swagger UI)
+## GitHub Actions — Tests automáticos
 
-Una vez arrancada la aplicación:
+La colección Postman se ejecuta automáticamente en cada push a `develop` o `main`.
 
-- Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-- OpenAPI JSON: [http://localhost:8080/api-docs](http://localhost:8080/api-docs)
+**Resultado actual:** 137 assertions ✅ | 96 requests | 0 fallos
+
+El workflow:
+1. Levanta MariaDB como servicio de GitHub Actions
+2. Compila el JAR con Maven
+3. Arranca la API Spring Boot
+4. Ejecuta Newman con la colección completa
+5. Sube el reporte HTML como artefacto descargable
+
+---
+
+## AWS — Despliegue
+
+La API está desplegada en una instancia EC2 de AWS Academy (t2.micro, Ubuntu 24.04).
+
+> ⚠️ La instancia puede estar apagada fuera de las sesiones de laboratorio (AWS Academy Learner Lab tiene sesiones de 4h).
+
+**Acceso:**
+- API: `http://<EC2_PUBLIC_IP>:8080`
+- Swagger UI: `http://<EC2_PUBLIC_IP>:8080/swagger-ui.html`
+
+**Despliegue realizado con:**
+```bash
+# En la EC2
+sudo apt install docker.io docker-compose-plugin -y
+git clone https://github.com/paularicarte28/API_Padel_Acceso_Datos_AA2.git
+cd API_Padel_Acceso_Datos_AA2
+cp .env.sample .env
+docker compose up -d --build
+```
 
 ---
 
 ## Autenticación JWT
 
-Las operaciones de escritura (POST, PUT, PATCH, DELETE) sobre clubs, pistas, torneos, usuarios, reservas e inscripciones requieren un token JWT.
+Las operaciones de escritura requieren token JWT.
 
-**1. Registrar un usuario:**
+**1. Registrar usuario:**
 ```http
 POST /usuarios
 Content-Type: application/json
@@ -85,9 +151,27 @@ Content-Type: application/json
 }
 ```
 
-**3. Usar el token en las peticiones:**
+**3. Usar el token:**
 ```http
 Authorization: Bearer <token>
+```
+
+---
+
+## Tests de integración (Postman)
+
+La colección está en `postman/PadelZGZ_API_RUNNER.postman_collection.json`.
+
+Cubre las 7 entidades (Usuarios, Clubs, Pistas, Reservas, Torneos, Inscripciones, Valoraciones) con:
+- Casos OK (200, 201, 204)
+- Casos de error (400, 401, 404, 409)
+- Setup automático de datos (crea usuario + login + token antes de cada bloque)
+
+```bash
+# Ejecutar localmente
+npm install -g newman
+newman run postman/PadelZGZ_API_RUNNER.postman_collection.json \
+  --env-var "baseUrl=http://localhost:8080"
 ```
 
 ---
@@ -95,68 +179,30 @@ Authorization: Bearer <token>
 ## Estructura del proyecto
 
 ```
-src/main/java/com/padelzgz/api/
-├── PadelZGZApplication.java
-├── config/          # AppConfig (ModelMapper), SecurityConfig
-├── controller/      # ClubController, PistaController, UsuarioController,
-│                    # ReservaController, TorneoController,
-│                    # InscripcionController, ValoracionController, AuthController
-├── dto/             # ReservaInDTO, InscripcionInDTO, ClubPistasResumenDTO,
-│                    # LoginRequestDTO, LoginResponseDTO
-├── exception/       # *NotFoundException, BadRequestException, ErrorResponse
-├── model/           # Club, Pista, Usuario, Reserva, Torneo, Inscripcion, Valoracion
-├── repository/      # *Repository (JPA + queries nativas)
-├── security/        # JwtUtils, JwtAuthFilter, UserDetailsServiceImpl
-└── service/         # *Service (interfaz) + impl/*ServiceImpl
+├── .github/workflows/
+│   └── postman-tests.yml        # GitHub Action — tests automáticos
+├── postman/
+│   ├── PadelZGZ_API_RUNNER.postman_collection.json
+│   ├── PadelZGZ_CI.postman_environment.json
+│   └── *-test-data.csv          # Datos de prueba por entidad
+├── src/main/java/com/padelzgz/api/
+│   ├── config/                  # SecurityConfig, AppConfig, OpenApiConfig
+│   ├── controller/              # Controllers v1 y v2
+│   ├── dto/                     # DTOs de entrada/salida
+│   ├── exception/               # Excepciones personalizadas
+│   ├── model/                   # Entidades JPA
+│   ├── repository/              # Repositorios Spring Data
+│   ├── security/                # JWT (JwtUtils, JwtAuthFilter)
+│   └── service/                 # Servicios e implementaciones
+├── src/main/resources/
+│   ├── application.properties          # Configuración base
+│   ├── application-dev.properties      # Perfil desarrollo
+│   └── application-prod.properties     # Perfil producción
+├── docker-compose.yml           # Producción: API + MariaDB
+├── docker-compose.test.yml      # Tests locales: BD efímera en RAM
+├── Dockerfile
+└── .env.sample                  # Plantilla de variables de entorno
 ```
-
----
-
-## Endpoints principales
-
-| Método | URL | Descripción | Auth |
-|--------|-----|-------------|------|
-| GET | /clubs | Listar clubs (filtros: ciudad, activo) | No |
-| GET | /clubs/{id} | Obtener club | No |
-| GET | /clubs/{id}/pistas-resumen | Resumen pistas con valoración media | No |
-| POST | /clubs | Crear club | Sí |
-| PUT | /clubs/{id} | Modificar club | Sí |
-| PATCH | /clubs/{id} | Modificar club parcialmente | Sí |
-| DELETE | /clubs/{id} | Eliminar club | Sí |
-| GET | /pistas | Listar pistas (filtros: tipo, interior, activa) | No |
-| GET | /pistas/por-precio?min=&max= | Pistas en rango de precio | No |
-| GET | /pistas/mejor-valoradas | Pistas con puntuación media ≥ valor | No |
-| POST | /pistas/club/{clubId} | Crear pista en un club | Sí |
-| GET | /usuarios | Listar usuarios (filtros: nivel, nombre) | Sí |
-| POST | /usuarios | Registrar usuario | No |
-| POST | /auth/login | Obtener token JWT | No |
-| GET | /reservas | Listar reservas (filtros: fecha, pagado) | Sí |
-| POST | /reservas | Crear reserva | Sí |
-| GET | /torneos | Listar torneos (filtros: inscripcionAbierta, clubId) | No |
-| POST | /torneos/club/{clubId} | Crear torneo en un club | Sí |
-| GET | /inscripciones | Listar inscripciones (filtros: torneoId, estado) | Sí |
-| POST | /inscripciones | Inscribir usuario en torneo | Sí |
-| GET | /valoraciones | Listar valoraciones (filtros: pistaId, puntuacion) | No |
-| POST | /valoraciones/pista/{pistaId}/usuario/{usuarioId} | Crear valoración | Sí |
-
----
-
-## Tests
-
-```bash
-# Ejecutar todos los tests
-mvn test
-```
-
-Los tests cubren:
-- Capa **Service**: tests unitarios con Mockito para las 5 clases principales
-- Capa **Controller**: tests con MockMvc para los casos 200, 201, 400 y 404
-
----
-
-## Logs
-
-La aplicación genera logs en la carpeta `logs/padelzgz.log` con rotación diaria y límite de 10MB por fichero.
 
 ---
 
@@ -165,7 +211,9 @@ La aplicación genera logs en la carpeta `logs/padelzgz.log` con rotación diari
 - Spring Boot 3.2
 - Spring Data JPA + Hibernate
 - Spring Security + JWT (jjwt 0.11.5)
-- MariaDB
-- Lombok + ModelMapper
+- MariaDB 11.3
+- Lombok
 - Springdoc OpenAPI (Swagger UI)
-- JUnit 5 + Mockito
+- Docker + Docker Compose
+- Newman (Postman CLI)
+- GitHub Actions
